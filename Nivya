@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Love You ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff4d6d, #ffb3c1);
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .card {
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: fadeIn 1.5s ease-in-out;
+      position: relative;
+      z-index: 2;
+      max-width: 320px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
+
+    .heart {
+      font-size: 4em;
+      animation: beat 1s infinite;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1em;
+      background: white;
+      color: #ff4d6d;
+      font-weight: bold;
+      margin-right: 5px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+      margin-top: 15px;
+      font-size: 1.2em;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart-float {
+      position: absolute;
+      color: white;
+      animation: floatUp 6s linear infinite;
+      font-size: 20px;
+      opacity: 0.7;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(100vh); }
+      to { transform: translateY(-10vh); }
+    }
+
+    .proposal {
+      display: none;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="heart">❤️</div>
+    <h1>I love you ❤️</h1>
+    <p>Tap below to see something special 💕</p>
+
+    <button onclick="revealLove()">Open your surprise 💖</button>
+
+    <div class="hidden" id="message"></div>
+
+    <div class="proposal" id="proposal">
+      <p>Will you be mine, today and always? 💍</p>
+      <button onclick="yesAnswer()">Yes, forever 💖</button>
+      <button onclick="noAnswer()" id="noBtn">No 💔</button>
+    </div>
+  </div>
+
+  <script>
+    function revealLove() {
+      let msg = document.getElementById('message');
+      let proposal = document.getElementById('proposal');
+
+      msg.innerHTML = "I love you more than words can say 💖";
+      msg.style.display = "block";
+      proposal.style.display = "block";
+
+      createHearts();
+    }
+
+    function yesAnswer() {
+      let msg = document.getElementById('message');
+      msg.innerHTML = "💖 You said YES! Forever together 💖";
+      createHearts();
+      launchConfetti();
+      launchFireworks();
+    }
+
+    function noAnswer() {
+      let noBtn = document.getElementById('noBtn');
+      let card = document.querySelector('.card');
+
+      let cardRect = card.getBoundingClientRect();
+
+      let padding = 20;
+      let maxX = window.innerWidth - noBtn.offsetWidth - padding;
+      let maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+      let x, y;
+
+      do {
+        x = Math.random() * maxX;
+        y = Math.random() * maxY;
+      } while (
+        x > cardRect.left - 50 && x < cardRect.right + 50 &&
+        y > cardRect.top - 50 && y < cardRect.bottom + 50
+      );
+
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transition = "0.2s ease";
+      noBtn.style.transform = "rotate(" + (Math.random() * 30 - 15) + "deg) scale(1.05)";
+    }
+
+    function createHearts() {
+      for (let i = 0; i < 20; i++) {
+        let heart = document.createElement('div');
+        heart.className = 'heart-float';
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (3 + Math.random() * 5) + 's';
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 7000);
+      }
+    }
+  </script>
+
+
+  <canvas id="fxCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('fxCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = 'fixed';
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = 1;
+
+    function launchConfetti() {
+      const pieces = [];
+      for (let i = 0; i < 120; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 20 + 10,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.r, p.r);
+        });
+        update();
+      }
+
+      function update() {
+        pieces.forEach(p => {
+          p.y += 3;
+          p.x += Math.sin(p.y * 0.01);
+          if (p.y > canvas.height) p.y = -10;
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        draw();
+        frames++;
+        if (frames < 200) requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    function launchFireworks() {
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          createBurst();
+        }, i * 400);
+      }
+    }
+
+    function createBurst() {
+      const centerX = Math.random() * window.innerWidth;
+      const centerY = Math.random() * window.innerHeight / 2;
+
+      for (let i = 0; i < 30; i++) {
+        const dot = document.createElement('div');
+        dot.style.position = 'fixed';
+        dot.style.left = centerX + 'px';
+        dot.style.top = centerY + 'px';
+        dot.style.width = '6px';
+        dot.style.height = '6px';
+        dot.style.borderRadius = '50%';
+        dot.style.background = `hsl(${Math.random() * 360},100%,60%)`;
+        dot.style.zIndex = 2;
+        document.body.appendChild(dot);
+
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = Math.random() * 6 + 2;
+
+        let vx = Math.cos(angle) * speed;
+        let vy = Math.sin(angle) * speed;
+
+        let x = centerX;
+        let y = centerY;
+
+        function animate() {
+          x += vx;
+          y += vy;
+          vy += 0.05;
+
+          dot.style.left = x + 'px';
+          dot.style.top = y + 'px';
+
+          if (y < window.innerHeight) {
+            requestAnimationFrame(animate);
+          } else {
+            dot.remove();
+          }
+        }
+
+        animate();
+      }
+    }
+  </script>
+</body>
+</html>
